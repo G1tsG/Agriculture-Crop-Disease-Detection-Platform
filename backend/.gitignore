@@ -1,0 +1,51 @@
+# Python bytecode/cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# Tool/test caches
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.pyre/
+.hypothesis/
+.tox/
+.nox/
+.coverage
+.coverage.*
+htmlcov/
+
+# Logs
+*.log
+logs/
+
+# Local databases
+*.db
+*.sqlite
+*.sqlite3
+
+# Runtime uploads/temp files
+app/uploads/*
+!app/uploads/.gitkeep
+uploads/*
+!uploads/.gitkeep
+
+# Jupyter and editor artifacts
+.ipynb_checkpoints/
+.vscode/
+.idea/
+
+# OS junk
+.DS_Store
+Thumbs.db
