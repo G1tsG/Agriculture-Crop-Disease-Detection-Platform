@@ -1,7 +1,7 @@
 import { useState } from "react";
 import Navbar from "./components/common/Navbar";
 import UploadPage from "./pages/UploadPage";
-// import ResultsPage from "./pages/ResultsPage";
+import ResultsPage from "./pages/ResultsPage";
 import "./styles/global.css";
 
 export default function App() {

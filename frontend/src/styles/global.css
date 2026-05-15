@@ -587,6 +587,43 @@ video { width: 100%; border-radius: 12px; }
   color: var(--text2);
 }
 
+.results-img-badge-live {
+  color: var(--green);
+  border-color: rgba(74,222,128,0.35);
+  background: rgba(10,15,10,0.82);
+}
+
+.results-img-badge-mock {
+  color: var(--amber);
+  border-color: rgba(251,191,36,0.35);
+  background: rgba(10,15,10,0.82);
+}
+
+.results-source-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  padding: 8px 12px;
+  border-radius: 20px;
+  border: 1px solid;
+  white-space: nowrap;
+}
+
+.results-source-pill-live {
+  color: var(--green);
+  background: var(--green-dim);
+  border-color: rgba(74,222,128,0.2);
+}
+
+.results-source-pill-mock {
+  color: var(--amber);
+  background: var(--amber-dim);
+  border-color: rgba(251,191,36,0.2);
+}
+
 .disease-card {
   background: var(--surface);
   border: 1px solid var(--border);
