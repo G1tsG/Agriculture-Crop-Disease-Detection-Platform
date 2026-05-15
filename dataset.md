@@ -7,21 +7,28 @@ Dataset used for training and testing the plant disease detection model.
 
 ## Classes Included
 
-- Pepper Bell Bacterial Spot
-- Pepper Bell Healthy
-- Potato Early Blight
-- Potato Late Blight
-- Potato Healthy
-- Tomato Bacterial Spot
-- Tomato Early Blight
-- Tomato Late Blight
-- Tomato Leaf Mold
-- Tomato Septoria Leaf Spot
-- Tomato Spider Mites
-- Tomato Target Spot
-- Tomato Yellow Leaf Curl Virus
-- Tomato Mosaic Virus
-- Tomato Healthy
+## 📂 Classes Included
+
+### Pepper Bell
+- Bacterial Spot
+- Healthy
+
+### Potato
+- Early Blight
+- Late Blight
+- Healthy
+
+### Tomato
+- Bacterial Spot
+- Early Blight
+- Late Blight
+- Leaf Mold
+- Septoria Leaf Spot
+- Spider Mites
+- Target Spot
+- Yellow Leaf Curl Virus
+- Mosaic Virus
+- Healthy
 
 ## Total Classes
 15
