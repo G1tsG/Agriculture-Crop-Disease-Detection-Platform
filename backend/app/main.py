@@ -1,6 +1,6 @@
 from pathlib import Path
 import sys
-
+from app.database import db
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 

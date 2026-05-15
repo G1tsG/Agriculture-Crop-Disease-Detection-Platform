@@ -5,7 +5,11 @@ import FungicidesTable from "../components/results/FungicidesTable";
 import ResourcesList from "../components/results/ResourcesList";
 
 export default function ResultsPage({ data, onBack }) {
-  const { result, image } = data;
+  const { result, image, source } = data;
+  const safeResult = result || {};
+  const isLivePrediction = source === "actual";
+  const sourceLabel = isLivePrediction ? "Live AI prediction" : "Mock fallback result";
+  const sourceClass = isLivePrediction ? "results-img-badge-live" : "results-img-badge-mock";
 
   return (
     <div className="page">
@@ -14,23 +18,30 @@ export default function ResultsPage({ data, onBack }) {
           <div className="page-tag">Analysis Complete</div>
           <h1 className="page-title">Detection <span>Results</span></h1>
         </div>
-        <button className="btn-secondary" onClick={onBack} style={{ marginTop: 8 }}>← New Scan</button>
+        <div style={{ display: "flex", gap: 12, alignItems: "center", marginTop: 8 }}>
+          <div className={`results-source-pill ${isLivePrediction ? "results-source-pill-live" : "results-source-pill-mock"}`}>
+            {sourceLabel}
+          </div>
+          <button className="btn-secondary" onClick={onBack}>← New Scan</button>
+        </div>
       </div>
 
       <div className="results-hero">
         <div className="results-img-wrap">
           <img src={image} alt="Scanned" className="results-img" />
-          <div className="results-img-badge">Analyzed sample · {new Date().toLocaleDateString()}</div>
+          <div className={`results-img-badge ${sourceClass}`}>
+            {sourceLabel} · {new Date().toLocaleDateString()}
+          </div>
         </div>
-        <DiseaseCard result={result} />
+        <DiseaseCard result={safeResult} />
       </div>
 
-      <SymptomsCauses symptoms={result.symptoms} causes={result.causes} />
-      <TreatmentSteps treatments={result.treatments} />
+      <SymptomsCauses symptoms={safeResult.symptoms || []} causes={safeResult.causes || []} />
+      <TreatmentSteps treatments={safeResult.treatments || []} />
 
       <div className="results-grid">
-        <FungicidesTable fungicides={result.fungicides} />
-        <ResourcesList links={result.links} />
+        <FungicidesTable fungicides={safeResult.fungicides || []} />
+        <ResourcesList links={safeResult.links || []} />
       </div>
     </div>
   );

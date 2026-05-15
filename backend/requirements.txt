@@ -5,3 +5,6 @@ pillow
 tensorflow
 numpy
 python-multipart
+pymongo
+motor
+python-dotenv

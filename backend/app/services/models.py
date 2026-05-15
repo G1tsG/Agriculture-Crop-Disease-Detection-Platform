@@ -9,21 +9,21 @@ from ..utils.image_preprocess import preprocess_image
 MODEL_PATH = Path(__file__).resolve().parents[3] / "models" / "final_weights.keras"
 
 CLASS_NAMES = [
-    "Pepper__bell___Bacterial_spot",
-    "Pepper__bell___healthy",
-    "Potato___Early_blight",
-    "Potato___Late_blight",
-    "Potato___healthy",
-    "Tomato_Bacterial_spot",
-    "Tomato_Early_blight",
-    "Tomato_Late_blight",
-    "Tomato_Leaf_Mold",
-    "Tomato_Septoria_leaf_spot",
-    "Tomato_Spider_mites",
-    "Tomato_Target_Spot",
-    "Tomato_Yellow_Leaf_Curl_Virus",
-    "Tomato_mosaic_virus",
-    "Tomato_healthy",
+    "Pepper Bell Bacterial Spot",
+    "Pepper Bell Healthy",
+    "Potato Early Blight",
+    "Potato Late Blight",
+    "Potato Healthy",
+    "Tomato Bacterial Spot",
+    "Tomato Early Blight",
+    "Tomato Late Blight",
+    "Tomato Leaf Mold",
+    "Tomato Septoria Leaf Spot",
+    "Tomato Spider Mites",
+    "Tomato Target Spot",
+    "Tomato Yellow Leaf Curl Virus",
+    "Tomato Mosaic Virus",
+    "Tomato Healthy",
 ]
 
 
