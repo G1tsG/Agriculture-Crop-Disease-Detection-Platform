@@ -17,6 +17,18 @@ export const MOCK_RESULT = {
     "Extended periods of leaf wetness (>10 hrs)",
     "Infected seed tubers or plant material",
   ],
+  features: [
+    "Water-soaked spots on lower leaves",
+    "White fungal growth under leaf surface",
+    "Fruit lesions that turn brown and rot",
+    "Stem and petiole discoloration",
+  ],
+  precautions: [
+    "Remove and destroy infected foliage immediately",
+    "Avoid overhead watering and keep foliage dry",
+    "Apply preventive fungicide at first sign of disease",
+    "Rotate susceptible crops to reduce pathogen load",
+  ],
   treatments: [
     { step: 1, action: "Remove infected plants immediately", priority: "urgent" },
     { step: 2, action: "Apply copper-based fungicide spray", priority: "urgent" },
