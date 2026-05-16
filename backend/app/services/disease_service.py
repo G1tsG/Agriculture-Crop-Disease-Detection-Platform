@@ -1,6 +1,7 @@
 import json
 from copy import deepcopy
 from pathlib import Path
+import re
 
 from ..database import db
 
@@ -44,19 +45,50 @@ async def get_disease_details(disease_name: str):
         collection = db.diseases
         print(f"Connected to diseases collection")
 
-        # Try exact match first
-        disease_doc = await collection.find_one({"disease_name": disease_name})
-        print(f"Exact match result: {disease_doc is not None}")
+        # Try several lookup strategies for robustness
+        disease_doc = None
 
-        # Try case-insensitive regex match
+        # 1) Exact match on `disease_name`
+        disease_doc = await collection.find_one({"disease_name": disease_name})
+        if disease_doc:
+            print("Exact match on disease_name")
+
+        # 2) Exact match on alternative `disease` field
+        if not disease_doc:
+            disease_doc = await collection.find_one({"disease": disease_name})
+            if disease_doc:
+                print("Exact match on disease")
+
+        # 3) Case-insensitive regex match on `disease_name` and `disease`
         if not disease_doc:
             disease_doc = await collection.find_one({
                 "disease_name": {"$regex": disease_name, "$options": "i"}
             })
-            print(f"Case-insensitive match result: {disease_doc is not None}")
+            if disease_doc:
+                print("Regex match on disease_name")
+
+        if not disease_doc:
+            disease_doc = await collection.find_one({
+                "disease": {"$regex": disease_name, "$options": "i"}
+            })
+            if disease_doc:
+                print("Regex match on disease")
+
+        # 4) Lastly, fall back to scanning documents and matching normalized names
+        if not disease_doc:
+            async for doc in collection.find({}):
+                try:
+                    doc_name = _normalize_name(doc.get("disease_name", ""))
+                    doc_alias = _normalize_name(doc.get("disease", ""))
+                    if normalized_name == doc_name or normalized_name == doc_alias:
+                        disease_doc = doc
+                        print("Found by normalized scan")
+                        break
+                except Exception:
+                    continue
 
         if disease_doc:
-            print(f"Found disease document: {disease_doc.get('disease_name', 'N/A')}")
+            print(f"Found disease document: {disease_doc.get('disease_name', disease_doc.get('disease', 'N/A'))}")
             disease_doc.pop("_id", None)
             return disease_doc
         else:
@@ -91,6 +123,8 @@ def _transform_disease_data(disease_doc: dict) -> dict:
     if not disease_doc:
         return None
 
+    # Build a clean, predictable object for the frontend and keep the original
+    # document under `raw` so we don't accidentally overwrite mapped fields.
     return {
         # Core identification
         "disease": disease_doc.get("disease_name", ""),
@@ -103,26 +137,27 @@ def _transform_disease_data(disease_doc: dict) -> dict:
 
         # Classification
         "pathogen": disease_doc.get("pathogen", "Unknown"),
+        "pathogen_type": disease_doc.get("pathogen_type", ""),
 
         # Symptoms and diagnosis
-        "symptoms": disease_doc.get("symptoms", []),
-        "causes": disease_doc.get("causes", []),
+        "symptoms": disease_doc.get("symptoms", []) if isinstance(disease_doc.get("symptoms", []), list) else [],
+        "causes": disease_doc.get("causes", []) if isinstance(disease_doc.get("causes", []), list) else [],
 
         # Treatment protocol
-        "treatments": disease_doc.get("treatment_steps", []),
+        "treatments": disease_doc.get("treatment_steps", []) if isinstance(disease_doc.get("treatment_steps", []), list) else [],
 
         # Fungicides/pesticides
-        "fungicides": disease_doc.get("fungicides", []),
+        "fungicides": disease_doc.get("fungicides", []) if isinstance(disease_doc.get("fungicides", []), list) else [],
 
         # Additional info
-        "prevention": disease_doc.get("prevention", []),
+        "prevention": disease_doc.get("prevention", []) if isinstance(disease_doc.get("prevention", []), list) else [],
         "additional_information": disease_doc.get("additional_information", ""),
 
         # Resources/links
-        "links": disease_doc.get("resources", []),
+        "links": disease_doc.get("resources", []) if isinstance(disease_doc.get("resources", []), list) else [],
 
-        # Keep database fields for backward compatibility
-        **disease_doc
+        # Keep original document accessible but avoid merging top-level keys
+        "raw": deepcopy(disease_doc)
     }
 
 
