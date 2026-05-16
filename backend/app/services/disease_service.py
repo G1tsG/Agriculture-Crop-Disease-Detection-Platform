@@ -81,3 +81,56 @@ async def get_disease_details(disease_name: str):
 
     print(f"No disease found in MongoDB or local data for: {disease_name}")
     return None
+
+
+def _transform_disease_data(disease_doc: dict) -> dict:
+    """
+    Transform disease data from database structure to frontend structure.
+    Maps database fields to frontend expected fields.
+    """
+    if not disease_doc:
+        return None
+
+    return {
+        # Core identification
+        "disease": disease_doc.get("disease_name", ""),
+        "crop": disease_doc.get("plant_name", ""),
+        "scientificName": disease_doc.get("scientific_name", "N/A"),
+
+        # Assessment
+        "severity": disease_doc.get("severity", "Medium"),
+        "confidence": disease_doc.get("confidence_baseline", 0),
+
+        # Classification
+        "pathogen": disease_doc.get("pathogen", "Unknown"),
+
+        # Symptoms and diagnosis
+        "symptoms": disease_doc.get("symptoms", []),
+        "causes": disease_doc.get("causes", []),
+
+        # Treatment protocol
+        "treatments": disease_doc.get("treatment_steps", []),
+
+        # Fungicides/pesticides
+        "fungicides": disease_doc.get("fungicides", []),
+
+        # Additional info
+        "prevention": disease_doc.get("prevention", []),
+        "additional_information": disease_doc.get("additional_information", ""),
+
+        # Resources/links
+        "links": disease_doc.get("resources", []),
+
+        # Keep database fields for backward compatibility
+        **disease_doc
+    }
+
+
+async def get_disease_details_mapped(disease_name: str):
+    """
+    Fetch disease details and transform to frontend structure.
+    """
+    disease_doc = await get_disease_details(disease_name)
+    if disease_doc:
+        return _transform_disease_data(disease_doc)
+    return None
