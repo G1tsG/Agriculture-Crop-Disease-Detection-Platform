@@ -1,204 +1,193 @@
 # 🌿 Agriculture Crop Disease Detection Platform
 
-> AI-powered early disease detection system for farmers — detect plant diseases from leaf images and get instant treatment recommendations.
+> A web-based plant disease detection platform with React frontend and FastAPI backend.
 
 ---
 
 ## 📖 Overview
 
-Crop diseases cause massive agricultural losses every year. This platform empowers farmers with an accessible, mobile-first tool that uses computer vision and machine learning to **detect plant diseases early** from simple leaf photographs — before the damage spreads.
+This repository contains a working disease detection prototype that analyzes plant leaf images, predicts disease class with a Keras model, and displays structured results in a modern web UI.
 
-Whether online or offline, in the field or at home, farmers get instant, actionable guidance.
-
----
-
-## 🚀 Key Features
-
-### Core Functionality
-- 📸 **Leaf Image Input** — Snap or upload a photo of a diseased leaf
-- 🔍 **Disease Classification** — Identifies disease type with high accuracy using deep learning
-- 💊 **Treatment Suggestions** — Provides immediate, crop-specific treatment recommendations
-- 📊 **Confidence Score** — Shows prediction confidence to guide decision-making
-
-### Advanced Features
-- 📱 **Mobile App for Farmers** — Intuitive, low-bandwidth Android/iOS app designed for rural use
-- ⚡ **Offline Inference Optimization** — On-device ML model (TensorFlow Lite / ONNX) for areas with no connectivity
-- 🌦️ **Weather API Integration** — Correlates local weather conditions with disease risk levels to provide context-aware alerts
-- 🗺️ **Regional Disease Mapping** — Aggregates detection data to show disease hotspots by geography
-- 🔔 **Early Warning Alerts** — Notifies farmers when weather + regional data suggests high disease risk
+The app combines:
+- clean React/Vite frontend upload and preview flow
+- FastAPI backend for image ingestion and model inference
+- TensorFlow/Keras model weights in `models/final_weights.keras`
+- optional disease metadata lookup from MongoDB or local JSON data
 
 ---
 
-## 🏗️ System Architecture
+## 🚀 What It Does Today
 
-```
-┌─────────────────────────────────────────────────────┐
-│                  Farmer (Mobile App)                 │
-│          [ Capture Leaf Image ]                      │
-└──────────────────────┬──────────────────────────────┘
-                       │
-          ┌────────────▼────────────┐
-          │   Offline Inference     │  ← TFLite Model
-          │   (On-Device ML)        │     (No internet needed)
-          └────────────┬────────────┘
-                       │ (if online)
-          ┌────────────▼────────────┐
-          │   Cloud ML API Server   │  ← Full Model (higher accuracy)
-          └────────────┬────────────┘
-                       │
-          ┌────────────▼────────────┐
-          │  Disease Classification │
-          │  + Treatment Engine     │
-          └────────────┬────────────┘
-                       │
-          ┌────────────▼────────────┐
-          │  Weather API Layer      │  ← OpenWeatherMap / IMD API
-          │  (Risk Contextualization│
-          └────────────┬────────────┘
-                       │
-          ┌────────────▼────────────┐
-          │  Results Dashboard      │
-          │  Disease + Treatment    │
-          │  + Weather Risk Score   │
-          └─────────────────────────┘
-```
+- Upload a leaf image via drag-and-drop or camera capture
+- Send the image to the backend at `POST /predict`
+- Run inference using a TensorFlow/Keras model
+- Return a disease label and confidence score
+- Enrich predictions with symptoms, causes, treatments, fungicides, and resources when disease metadata is available
+- Display results on a responsive results page with a clean UI
 
 ---
 
 ## 🛠️ Tech Stack
 
-| Layer | Technology |
-|---|---|
-| Mobile App | Flutter (Android + iOS) |
-| On-Device ML | TensorFlow Lite / ONNX Runtime |
-| Cloud ML Backend | Python, FastAPI, PyTorch |
-| Model Architecture | EfficientNet / ResNet (Transfer Learning) |
-| Weather Integration | OpenWeatherMap API / IMD API |
-| Database | PostgreSQL + Redis (caching) |
-| Cloud Hosting | AWS / Google Cloud |
-| Dataset | PlantVillage Dataset + Custom Data |
+- Frontend: React, Vite, JavaScript
+- Backend: Python, FastAPI, Uvicorn
+- Model: TensorFlow / Keras
+- Image processing: Pillow, NumPy
+- Database: MongoDB optional, local JSON fallback supported
 
 ---
 
 ## 📂 Project Structure
 
 ```
-crop-disease-detection/
-├── mobile/                  # Flutter mobile application
-│   ├── lib/
-│   ├── assets/models/       # TFLite models for offline inference
-│   └── pubspec.yaml
-├── backend/                 # FastAPI ML server
-│   ├── api/
-│   ├── models/              # Trained model weights
-│   ├── inference/
-│   └── weather/             # Weather API integration
-├── ml/                      # Model training pipeline
-│   ├── train.py
-│   ├── evaluate.py
-│   └── datasets/
-├── docs/                    # Documentation
-└── README.md
+Agriculture-Crop-Disease-Detection-Platform/
+├── backend/
+│   ├── app/
+│   │   ├── main.py
+│   │   ├── routes/getdisease.py
+│   │   ├── services/models.py
+│   │   ├── services/disease_service.py
+│   │   ├── services/predict.py
+│   │   ├── utils/image_preprocess.py
+│   │   └── uploads/
+│   ├── requirements.txt
+│   └── run.sh
+├── frontend/
+│   ├── src/
+│   │   ├── App.jsx
+│   │   ├── pages/UploadPage.jsx
+│   │   ├── pages/ResultsPage.jsx
+│   │   ├── components/
+│   │   └── styles/global.css
+│   ├── package.json
+│   └── vite.config.js
+├── models/
+│   └── final_weights.keras
+└── dataset.md
 ```
 
 ---
 
-## ⚙️ Setup & Installation
+## 🔍 Supported Classes
 
-### Prerequisites
-- Python 3.9+
-- Flutter SDK 3.x
-- Node.js 18+
+The current model predicts the following classes:
 
-### Backend Setup
+- Pepper Bell Bacterial Spot
+- Pepper Bell Healthy
+- Potato Early Blight
+- Potato Late Blight
+- Potato Healthy
+- Tomato Bacterial Spot
+- Tomato Early Blight
+- Tomato Late Blight
+- Tomato Leaf Mold
+- Tomato Septoria Leaf Spot
+- Tomato Spider Mites
+- Tomato Target Spot
+- Tomato Yellow Leaf Curl Virus
+- Tomato Mosaic Virus
+- Tomato Healthy
+
+---
+
+## ⚙️ Local Setup
+
+### Backend
+
 ```bash
-# Clone the repository
-git clone https://github.com/your-org/crop-disease-detection.git
-cd crop-disease-detection/backend
-
-# Create virtual environment
-python -m venv venv
-source venv/bin/activate  # Windows: venv\Scripts\activate
-
-# Install dependencies
+cd backend
+python -m venv .venv
+source .venv/bin/activate
 pip install -r requirements.txt
-
-# Set up environment variables
-cp .env.example .env
-# Add your WEATHER_API_KEY and DATABASE_URL in .env
-
-# Run the server
-uvicorn api.main:app --reload
+./run.sh
 ```
 
-### Mobile App Setup
+This starts the FastAPI server on `http://127.0.0.1:8000`.
+
+### Frontend
+
 ```bash
-cd mobile
-flutter pub get
-flutter run
+cd frontend
+npm install
+npm run dev
 ```
+
+Open the Vite URL shown in the terminal, typically `http://127.0.0.1:5173`.
 
 ---
 
-## 🌾 Supported Crops & Diseases
+## 🌐 Configuration
 
-| Crop | Detected Diseases |
-|---|---|
-| Tomato | Early Blight, Late Blight, Leaf Mold, Septoria Leaf Spot |
-| Potato | Early Blight, Late Blight |
-| Corn | Common Rust, Northern Leaf Blight, Gray Leaf Spot |
-| Wheat | Stripe Rust, Leaf Rust, Powdery Mildew |
-| Rice | Blast, Brown Spot, Bacterial Blight |
-| Grapes | Black Rot, Esca, Leaf Blight |
-
-> More crops being added continuously.
+- The frontend defaults to `http://127.0.0.1:8000` for the API endpoint.
+- Override the backend URL by setting `VITE_API_BASE_URL` in `frontend/.env` or your shell.
 
 ---
 
 ## 📡 API Reference
 
-### Detect Disease
+### POST /predict
+
+Upload a leaf image using multipart form data with the field name `file`.
+
+**Request**
+
 ```http
-POST /api/v1/detect
+POST http://127.0.0.1:8000/predict
 Content-Type: multipart/form-data
 
-{
-  "image": <leaf_image_file>,
-  "crop_type": "tomato",
-  "location": { "lat": 29.15, "lon": 75.72 }
-}
+file=@leaf.jpg
 ```
 
-**Response:**
+**Response when disease metadata is available**
+
 ```json
 {
-  "disease": "Early Blight",
-  "confidence": 0.94,
-  "treatment": "Apply copper-based fungicide every 7-10 days...",
-  "weather_risk": "High (humid conditions detected)",
-  "severity": "Moderate"
+  "success": true,
+  "prediction": {
+    "disease": "Tomato Early Blight",
+    "crop": "Tomato",
+    "scientificName": "Alternaria solani",
+    "severity": "Medium",
+    "confidence": 92.34,
+    "symptoms": ["Dark lesions on lower leaves", "Yellowing between veins"],
+    "causes": ["High humidity", "Poor air circulation"],
+    "treatments": [{"step": 1, "action": "Remove infected leaves", "priority": "high"}],
+    "fungicides": ["Copper oxychloride"],
+    "links": ["https://example.com/tomato-early-blight"]
+  },
+  "source": "database"
+}
+```
+
+**Response when only model prediction is available**
+
+```json
+{
+  "success": true,
+  "prediction": {
+    "disease": "Tomato Early Blight",
+    "confidence": 92.34
+  },
+  "source": "prediction_only"
 }
 ```
 
 ---
 
-## 👥 Team Members
+## 🧠 Notes
 
-| Name | Student ID | Role |
-|---|---|---|
-| **Manik** | 123110033 | ML Model Development & Training |
-| **Gitansh** | 123110038 | Mobile App Development (Flutter) |
-| **Raghav** | 123110031 | Backend API & Cloud Infrastructure |
-| **Harsha** | 123110035 | Weather API Integration & UI/UX |
+- The frontend uses a mock fallback result if the backend request fails.
+- Disease metadata enrichment is optional and depends on MongoDB or a local JSON dataset.
+- This repo provides the web-based prototype only; it does not include a mobile app.
 
 ---
 
-## 🙏 Acknowledgements
+## 📚 Dataset
 
-- [OpenWeatherMap API](https://openweathermap.org/api) — Weather data
-- Indian Meteorological Department (IMD) — Regional weather data
-- TensorFlow Lite team — On-device ML framework
+See `dataset.md` for the dataset reference used to train the model.
 
 ---
 
-*Built with ❤️ to empower Indian farmers through technology.*
+## ❤️ Credits
+
+Built with React, Vite, FastAPI, TensorFlow, and Keras.
