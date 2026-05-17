@@ -10,32 +10,45 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://127.0.0.1:8000
 
 // Helper function to map MongoDB disease data to frontend format
 const mapDatabaseResultToFrontend = (dbData) => {
+  // Prefer normalized/mapped values, but also look inside `raw` (backend keeps original doc there).
+  const raw = dbData.raw || dbData;
+
   const hasDetailedData =
     Array.isArray(dbData.symptoms) ||
+    Array.isArray(raw.symptoms) ||
     Array.isArray(dbData.causes) ||
+    Array.isArray(raw.causes) ||
     Array.isArray(dbData.treatments) ||
+    Array.isArray(raw.treatment_steps) ||
     Array.isArray(dbData.treatment_steps) ||
     Array.isArray(dbData.fungicides) ||
+    Array.isArray(raw.fungicides) ||
     Array.isArray(dbData.links) ||
+    Array.isArray(raw.resources) ||
     Array.isArray(dbData.useful_links);
 
+  // If there is no detailed data, return a minimal object but populate key fields
   if (!hasDetailedData) {
     return {
       ...MOCK_RESULT,
       disease: dbData.disease || dbData.disease_name || MOCK_RESULT.disease,
-      confidence: dbData.confidence ?? MOCK_RESULT.confidence,
-      scientificName: dbData.scientificName || dbData.scientific_name || MOCK_RESULT.scientificName,
+      confidence: dbData.confidence ?? dbData.confidence_baseline ?? MOCK_RESULT.confidence,
+      scientificName: dbData.scientificName || raw.scientific_name || MOCK_RESULT.scientificName,
+      crop: dbData.crop || raw.plant_name || MOCK_RESULT.crop,
+      pathogen: dbData.pathogen || raw.pathogen || "Unknown",
+      fungicides: Array.isArray(raw.fungicides) ? raw.fungicides : [],
+      links: Array.isArray(raw.resources) ? raw.resources : [],
     };
   }
 
   return {
     disease: dbData.disease || dbData.disease_name || "Unknown",
-    crop: dbData.crop || dbData.plant_name || "Unknown",
-    confidence: dbData.confidence || 0,
-    severity: dbData.severity || "Medium",
-    scientificName: dbData.scientificName || dbData.scientific_name || "N/A",
-    symptoms: Array.isArray(dbData.symptoms) ? dbData.symptoms : [],
-    causes: Array.isArray(dbData.causes) ? dbData.causes : [],
+    crop: dbData.crop || raw.plant_name || "Unknown",
+    confidence: dbData.confidence || dbData.confidence_baseline || 0,
+    severity: dbData.severity || raw.severity || "Medium",
+    scientificName: dbData.scientificName || raw.scientific_name || "N/A",
+    symptoms: Array.isArray(dbData.symptoms) ? dbData.symptoms : Array.isArray(raw.symptoms) ? raw.symptoms : [],
+    causes: Array.isArray(dbData.causes) ? dbData.causes : Array.isArray(raw.causes) ? raw.causes : [],
     treatments: Array.isArray(dbData.treatments)
       ? dbData.treatments.map((step, idx) => ({
           step: step.step || idx + 1,
@@ -48,19 +61,24 @@ const mapDatabaseResultToFrontend = (dbData) => {
           action: typeof step === "string" ? step : step.action || step,
           priority: step.priority || "medium",
         }))
+      : Array.isArray(raw.treatment_steps)
+      ? raw.treatment_steps.map((step, idx) => ({
+          step: idx + 1,
+          action: typeof step === "string" ? step : step.action || step,
+          priority: step.priority || "medium",
+        }))
       : [],
-    fungicides: Array.isArray(dbData.fungicides) ? dbData.fungicides : [],
-    links: Array.isArray(dbData.links)
-      ? dbData.links
-      : Array.isArray(dbData.useful_links)
-      ? dbData.useful_links
-      : [],
-    features: Array.isArray(dbData.features) ? dbData.features : [],
+    fungicides: Array.isArray(dbData.fungicides) ? dbData.fungicides : Array.isArray(raw.fungicides) ? raw.fungicides : [],
+    links: Array.isArray(dbData.links) ? dbData.links : Array.isArray(raw.resources) ? raw.resources : [],
+    features: Array.isArray(dbData.features) ? dbData.features : Array.isArray(raw.features) ? raw.features : [],
     precautions: Array.isArray(dbData.precautions)
       ? dbData.precautions
+      : Array.isArray(raw.prevention)
+      ? raw.prevention
       : Array.isArray(dbData.prevention)
       ? dbData.prevention
       : [],
+    pathogen: dbData.pathogen || raw.pathogen || "Unknown",
   };
 };
 
