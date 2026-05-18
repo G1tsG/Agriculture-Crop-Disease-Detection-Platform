@@ -188,6 +188,12 @@ See `dataset.md` for the dataset reference used to train the model.
 
 ---
 
+## 📊 Project Presentation
+
+[View Project PPT](https://1drv.ms/p/c/a201f8fdb152d6e9/IQD90gUgN140TKl72PSpu5J3AQoNwvyqO9o5mfvFFkw_QdE?e=8VulAT)
+
+---
+
 ## ❤️ Credits
 
 Built with React, Vite, FastAPI, TensorFlow, and Keras.
